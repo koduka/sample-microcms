@@ -1,6 +1,10 @@
-import { useRef } from 'react'
+'use server'
 
-export function PrivacyPolicy() {
-  const document = useRef()
-  return <div></div>
+import { Html } from '@/libs/components/Html'
+import { getPrivacyPoricy } from '@/libs/data/privacy-policy'
+
+export async function PrivacyPolicy() {
+  const privacyPolicy = await getPrivacyPoricy()
+
+  return <div>{privacyPolicy && <Html html={privacyPolicy.html} />}</div>
 }
