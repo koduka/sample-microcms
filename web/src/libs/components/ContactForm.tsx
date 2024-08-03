@@ -100,7 +100,7 @@ export function ContactForm() {
             className="border-primary ring-offset-background focus-visible:ring-ring data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground peer size-4 shrink-0 rounded-sm border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           />
           <Label htmlFor="isAgreePrivacyPolicy">
-            <Link href="" className="font-semibold text-blue-500 hover:text-blue-500/80">
+            <Link target="_blank" href="/privacy-policy" className="font-semibold text-blue-500 hover:text-blue-500/80">
               個人情報保護方針
             </Link>
             に同意する

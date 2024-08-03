@@ -1,6 +1,12 @@
 'use server'
 
-import { createClient, type MicroCMSDate, type MicroCMSListResponse } from 'microcms-js-sdk'
+import type { MicroCMSDate, MicroCMSListResponse, MicroCMSQueries } from 'microcms-js-sdk'
+
+import { createClient } from 'microcms-js-sdk'
+
+export type Content<T> = T & MicroCMSDate
+export type Page<T> = MicroCMSListResponse<T>
+export type SearchQueries = Pick<MicroCMSQueries, 'limit' | 'offset'>
 
 const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN || 'local'
 const apiKey = process.env.MICROCMS_API_KEY || 'microcms'
@@ -10,7 +16,7 @@ const client = createClient({
   apiKey,
 })
 
-export async function getContent<T>(endpoint: string): Promise<(T & MicroCMSDate) | undefined> {
+export async function getContent<T>(endpoint: string): Promise<Content<T> | undefined> {
   try {
     const response = await client.getObject<T>({
       endpoint,
@@ -21,14 +27,14 @@ export async function getContent<T>(endpoint: string): Promise<(T & MicroCMSDate
   }
 }
 
-export async function searchContents<T>(endpoint: string): Promise<MicroCMSListResponse<T>> {
+export async function searchContents<T>(endpoint: string, queries?: SearchQueries): Promise<Page<T>> {
   try {
     const response = await client.getList<T>({
       endpoint,
+      queries,
     })
     return response
   } catch (e) {
-    console.error(e)
     return {
       contents: [],
       totalCount: 0,
