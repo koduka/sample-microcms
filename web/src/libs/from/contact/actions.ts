@@ -1,19 +1,22 @@
+'use server'
+
 import type { FormState } from '@/libs/from/state'
 import type { z } from 'zod'
 
 import { createContact as _createContact } from '@/libs/data/contact'
 import { createContactFormSchema } from '@/libs/from/contact/schema'
+import { siteverify } from '@/libs/recaptcha'
 
 export type CreateContactState = FormState<z.infer<typeof createContactFormSchema>>
 
-export async function createContact(formData: FormData): Promise<CreateContactState> {
-  console.log('name', formData.get('name'))
-  console.log('company', formData.get('company'))
-  console.log('department', formData.get('department'))
-  console.log('phoneNumber', formData.get('phoneNumber'))
-  console.log('email', formData.get('email'))
-  console.log('content', formData.get('content'))
-  console.log('isAgreePrivacyPolicy', formData.get('isAgreePrivacyPolicy'))
+export async function createContact(formData: FormData, reCaptchaToken: string): Promise<CreateContactState> {
+  const result = await siteverify(reCaptchaToken)
+  if (!result.success) {
+    return {
+      status: 'error',
+      message: 'Google reCAPTCHAの検証に失敗しました。もう一度お試しください。',
+    }
+  }
 
   const validatedFields = createContactFormSchema.safeParse({
     name: formData.get('name'),
@@ -46,7 +49,7 @@ export async function createContact(formData: FormData): Promise<CreateContactSt
     })
   } catch (e: unknown) {
     const errorMessage =
-      e instanceof Error ? e.message : '申し訳ありません。送信中にエラーが発生しました。再度お試しください。'
+      e instanceof Error ? e.message : '申し訳ありません。送信中にエラーが発生しました。もう一度お試しください。'
     return {
       status: 'error',
       message: errorMessage,

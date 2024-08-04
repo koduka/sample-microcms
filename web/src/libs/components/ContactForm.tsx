@@ -14,13 +14,21 @@ import { useFormState } from 'react-dom'
 import { FiSend } from 'react-icons/fi'
 import { toast } from 'sonner'
 
+import { useReCapcha } from '@/libs/components/ReCaptchaProvider'
 import Link from 'next/link'
 
 export function ContactForm() {
-  const [state, dispatch] = useFormState<CreateContactState, FormData>((_, formData) => createContact(formData), {
-    status: 'pending',
-  })
+  const [state, dispatch] = useFormState<CreateContactState, FormData>(
+    async (_, formData) => {
+      const token = await executeRecaptcha('contact')
+      return createContact(formData, token)
+    },
+    {
+      status: 'pending',
+    },
+  )
   const [disabledSubmitButton, setDisabledSubmitButton] = useState(true)
+  const { executeRecaptcha } = useReCapcha()
 
   useEffect(() => {
     console.log(state)
