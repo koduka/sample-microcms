@@ -35,5 +35,10 @@
       }
     ],
     "@next/next/no-img-element": "off"
+  },
+  "settings": {
+    "tailwindcss": {
+      "callees": ["cn"]
+    }
   }
 }
